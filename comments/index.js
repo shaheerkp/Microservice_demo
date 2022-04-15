@@ -20,22 +20,46 @@ app.post("/posts/:id/comments",(req,res)=>{
     const commentId=randomBytes(4).toString("hex")
     const{content}=req.body
     const comments=commentsByPostId[req.params.id]||[]
-    comments.push({id:req.params.id,content})   
+
+    comments.push({id:req.params.id,content,status:'pending'})   
+
     commentsByPostId[req.params.id]=comments
-    axios.post("htpp://localhost:4005/events",{
+    axios.post("htpp://event-bus-srv:4005/events",{
         type:'Comment created',
         data:{
             id:commentId, 
             content,
-            postId:req.params.id
+            postId:req.params.id,
+            status:"pending"
         } 
     })
     res.status(201).send(commentsByPostId) 
 
 })
 
-app.post('/events',(req,res)=>{
+app.post('/events',async(req,res)=>{
     console.log("Recieved Events ",req.body.type);
+    const {type,data}=req.body;
+    if(type==='CommentModerated'){
+        const {postId,id,status,content}=data;
+
+        const comments=commentsByPostId[postId];
+
+        const comment=comments.find(comment=>{
+            return comment.id===id;
+        });
+        comment.status=status;
+        await axios.post('http://event-bus-srv:4005',{
+            type:"CommentUpdated",
+            data:{
+                id,
+                status,
+                postId,
+                content
+            }
+        })
+
+    }
     res.send({})
 })
 

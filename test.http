@@ -1,0 +1,6 @@
+post http://192.168.49.2:31934/posts
+Content-Type: application/json
+
+{
+    "title":"abbasss is ok"
+} 

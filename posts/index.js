@@ -17,14 +17,14 @@ app.get('/posts',(req,res)=>{
  res.send(posts)
 }) 
 
-app.post('/posts',(req,res)=>{ 
+app.post('/posts',async(req,res)=>{ 
     const id =randomBytes(4).toString('hex') 
    
     const {title}=req.body
     posts[id]={
         id,title
     };
-    axios.post('http://localhost:4005/events',{
+   await axios.post('http://event-bus-srv:4005/events',{
         type:"PostedCreated",
         data:{
             id,
@@ -36,12 +36,13 @@ app.post('/posts',(req,res)=>{
 })
 
 app.post('/events',(req,res)=>{ 
-    console.log("Recieved Events ",req.body.type);
+    console.log("Recieved Events ",req.body);
     res.send({})
 })
 
 
 
 app.listen(4000,()=>{
+    console.log("v20");
     console.log("Listening on 4000");
 })
