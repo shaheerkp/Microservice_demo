@@ -2,10 +2,12 @@ const express=require('express')
 const axios=require('axios')
 
 
-
 const app =express()
+app.use(express.json());
 
 app.post('/events',async(req,res)=>{
+    console.log("Recieved Events ",req.body.type);
+    
     const {type,data}=req.body;
 
     if (type==='CommentCreated'){

@@ -21,6 +21,7 @@ app.post('/events',(req,res)=>{
     axios.post('http://comments-clusterip-srv:4001/events',event)
     axios.post('http://query-srv:4002/events',event)
     axios.post('http://moderation-srv:4003/events',event)
+  
 
     res.send({status:"ok"})  
 
